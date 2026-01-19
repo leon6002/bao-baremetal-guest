@@ -19,6 +19,11 @@
 #undef UART_BASE
 #define UART_BASE       0xF8D60000
 
+/* GIC Base Addresses (Overriding defaults in gic.h) */
+#define PLAT_GICD_BASE_ADDR (0xF4000000)
+#define PLAT_GICC_BASE_ADDR (0xF4200000)
+#define PLAT_GICR_BASE_ADDR (0xF4100000)
+
 #undef UART_IRQ_ID
 #define UART_IRQ_ID     0 
 #undef UART_IRQ_PRIO
