@@ -18,7 +18,8 @@
 #include <plat.h>
 
 MEMORY {
-    RAM (rwx)    : ORIGIN = MEM_BASE, LENGTH = MEM_SIZE    
+    RAM (rwx)    : ORIGIN = MEM_BASE, LENGTH = MEM_SIZE
+    UART (rw)    : ORIGIN = UART_BASE, LENGTH = 0x1000
 }
 
 ENTRY(_start)
@@ -42,6 +43,10 @@ SECTIONS {
         PROVIDE(__global_pointer$ = . + 0x800);
         *(.sdata .sdata.* .sdata2.*)
     }
+
+    .uart (NOLOAD) : {
+        *(.uart_reg)
+    } > UART
 
     .bss (NOLOAD) :  {	
         __bss_start = .;

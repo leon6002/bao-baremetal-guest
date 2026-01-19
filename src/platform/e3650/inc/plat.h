@@ -12,15 +12,22 @@
  * UART at 0xF8D60000
  */
 #undef MEM_BASE
-#define MEM_BASE        0x00B00000
+#define MEM_BASE        0x00AC0000
 #undef MEM_SIZE
-#define MEM_SIZE        0x00100000
+#define MEM_SIZE        0x00030000
 
+#undef UART_BASE
 #define UART_BASE       0xF8D60000
+
+#undef UART_IRQ_ID
 #define UART_IRQ_ID     0 
+#undef UART_IRQ_PRIO
 #define UART_IRQ_PRIO   1
+#undef TIMER_IRQ_ID
 #define TIMER_IRQ_ID    27
+#undef TIMER_IRQ_PRIO
 #define TIMER_IRQ_PRIO  1
+#undef IPI_IRQ_ID
 #define IPI_IRQ_ID      13
 
 #ifndef __ASSEMBLER__

@@ -101,9 +101,9 @@ struct e3650_uart {
 
 typedef volatile struct e3650_uart bao_uart_t;
 
-void uart_enable(volatile struct e3650_uart* uart);
-void uart_init(volatile struct e3650_uart* uart);
-void uart_puts(volatile struct e3650_uart* uart, const int8_t* str);
-void uart_putc(volatile struct e3650_uart* uart, int8_t c);
+void e3650_uart_enable(volatile struct e3650_uart* uart);
+void e3650_uart_init(volatile struct e3650_uart* uart);
+void e3650_uart_puts(volatile struct e3650_uart* uart, const int8_t* str);
+void e3650_uart_putc(volatile struct e3650_uart* uart, int8_t c);
 
 #endif /* E3650_UART_H */

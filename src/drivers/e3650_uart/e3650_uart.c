@@ -1,4 +1,4 @@
-#include <drivers/e3650_uart.h>
+#include <e3650_uart.h>
 #include <fences.h>
 
 
@@ -7,8 +7,13 @@
 #define UNUSED_ARG(opt) ((void)opt)
 #endif
 
-void uart_init(volatile struct e3650_uart* uart)
+void e3650_uart_init(volatile struct e3650_uart* uart)
 {
+    /* 0. Check if already enabled (Preserve Loader/Bao Config) */
+    if (uart->mcr0 & MCR0_MODEN) {
+        return;
+    }
+
     /* 1. Disable Module */
     uart->mcr0 = 0;
 
@@ -49,13 +54,13 @@ void uart_init(volatile struct e3650_uart* uart)
     uart->mcr0 |= MCR0_MODEN;
 }
 
-void uart_enable(volatile struct e3650_uart* uart)
+void e3650_uart_enable(volatile struct e3650_uart* uart)
 {
     /* Already handled in init, but keep for interface compliance */
-    uart_init(uart);
+    e3650_uart_init(uart);
 }
 
-void uart_putc(volatile struct e3650_uart* uart, int8_t c)
+void e3650_uart_putc(volatile struct e3650_uart* uart, int8_t c)
 {
     /* Wait until TX FIFO is not full */
     while (uart->fsr0 & FSR0_TX_FULL) { }
@@ -64,9 +69,9 @@ void uart_putc(volatile struct e3650_uart* uart, int8_t c)
     uart->txdr = (uint32_t)c;
 }
 
-void uart_puts(volatile struct e3650_uart* uart, const int8_t* str)
+void e3650_uart_puts(volatile struct e3650_uart* uart, const int8_t* str)
 {
     while (*str) {
-        uart_putc(uart, *str++);
+        e3650_uart_putc(uart, *str++);
     }
 }
