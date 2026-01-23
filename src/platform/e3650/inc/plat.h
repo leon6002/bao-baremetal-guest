@@ -12,9 +12,9 @@
  * UART at 0xF8D60000
  */
 #undef MEM_BASE
-#define MEM_BASE        0x00AC0000
+#define MEM_BASE        0x00B00000
 #undef MEM_SIZE
-#define MEM_SIZE        0x00030000
+#define MEM_SIZE        0x00100000
 
 #undef UART_BASE
 #define UART_BASE       0xF8D60000
