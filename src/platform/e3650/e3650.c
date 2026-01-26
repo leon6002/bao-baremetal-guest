@@ -8,22 +8,17 @@
 #include <uart.h>
 
 /* Global uart structure definition */
-volatile struct e3650_uart uart __attribute__((section(".uart_reg")));
-
-// void platform_init(void)
-// {
-//     uart_init();
-// }
+volatile struct e3650_uart *const uart = (void *)PLAT_UART_ADDR;
 
 void uart_init(void)
 {
-    e3650_uart_init(&uart);
-    e3650_uart_enable(&uart);
+    e3650_uart_init(uart);
+    e3650_uart_enable(uart);
 }
 
 void uart_putc(char c)
 {
-    e3650_uart_putc(&uart, c);
+    e3650_uart_putc(uart, c);
 }
 
 char uart_getchar(void)
