@@ -29,32 +29,47 @@
 
 spinlock_t print_lock = SPINLOCK_INITVAL;
 
+void main(void);
+
 void uart_rx_handler(unsigned id){
     (void)id;
-    printf("cpu%d: %s\n",get_cpuid(), __func__);
+    int vm_id = ((unsigned long)&main >= 0x00C00000) ? 1 : 0;
+    printf("[VM%d] cpu%d: %s\n", vm_id, get_cpuid(), __func__);
     uart_clear_rxirq();
 }
 
 void ipi_handler(unsigned id){
     (void)id;
-    printf("cpu%d: %s\n", get_cpuid(), __func__);
+    int vm_id = ((unsigned long)&main >= 0x00C00000) ? 1 : 0;
+    printf("[VM%d] cpu%d: %s\n", vm_id, get_cpuid(), __func__);
     irq_send_ipi(1ull << (get_cpuid() + 1));
 }
 
 void timer_handler(unsigned id){
     (void)id;
-    printf("cpu%d: %s\n", get_cpuid(), __func__);
+    int vm_id = ((unsigned long)&main >= 0x00C00000) ? 1 : 0;
+    printf("[VM%d] cpu%d: %s\n", vm_id, get_cpuid(), __func__);
     timer_set(TIMER_INTERVAL);
     irq_send_ipi(1ull << (get_cpuid() + 1));
 }
 
 void main(void){
 
+    /* Identify VM based on build time MEM_BASE or runtime check */
+    unsigned long my_addr = (unsigned long)&main;
+    int vm_id = (my_addr >= 0x00C00000) ? 1 : 0;
+
+    /* Extra huge delay for VM1 at startup to avoid banner collision */
+    if (vm_id == 1) {
+        for(volatile int k = 0; k < 40000000; k++); 
+    }
+
     static volatile bool master_done = false;
 
     if(cpu_is_master()){
         spin_lock(&print_lock);
-        printf("Bao bare-metal test guest\n");
+        /* Identify VM again for banner */
+        printf("[VM%d] Bao bare-metal test guest\n", vm_id);
         spin_unlock(&print_lock);
 
         irq_set_handler(UART_IRQ_ID, uart_rx_handler);
@@ -76,8 +91,12 @@ void main(void){
     irq_set_prio(IPI_IRQ_ID, UART_IRQ_PRIO);
 
     while(!master_done);
+
+    /* spin wait to avoid uart overwrites */
+    for(volatile int i = 0; i < get_cpuid() * 200000; i++);
+
     spin_lock(&print_lock);
-    printf("cpu %d up\n", get_cpuid());
+    printf("[VM%d] cpu %d up\n", vm_id, get_cpuid());
     spin_unlock(&print_lock);
 
     while(1) wfi();

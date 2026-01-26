@@ -11,10 +11,15 @@
  * Based on e3650 config: SRAM at 0x00A00000 
  * UART at 0xF8D60000
  */
-#undef MEM_BASE
+#ifndef MEM_BASE
 #define MEM_BASE        0x00B00000
-#undef MEM_SIZE
+#endif
+#ifndef MEM_BLK_IDX
+#define MEM_BLK_IDX     0xB
+#endif
+#ifndef MEM_SIZE
 #define MEM_SIZE        0x00100000
+#endif
 
 #undef UART_BASE
 #define UART_BASE       0xF8D60000

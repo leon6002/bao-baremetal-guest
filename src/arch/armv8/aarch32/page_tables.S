@@ -25,19 +25,20 @@
 page_table:
     .set ADDR, 0
 
-    .set COUNT, MEM_BASE/L1_BLOCK_SIZE
+    /* Map from 0 to MEM_BASE as device */
+    .set COUNT, MEM_BLK_IDX
     .rept   COUNT
     .4byte (PTE_SUPERPAGE | PTE_DEV_FLAGS) + ADDR
     .set ADDR, ADDR + L1_BLOCK_SIZE
     .endr
 
-    .set COUNT, MEM_SIZE/L1_BLOCK_SIZE
-    .rept   COUNT
+    /* Map the 1MB memory region (MEM_BASE to MEM_BASE+1MB) as memory */
     .4byte (PTE_SUPERPAGE | PTE_MEM_FLAGS) + ADDR
     .set ADDR, ADDR + L1_BLOCK_SIZE
-    .endr
 
-    .set COUNT, (0x100000000 - ADDR)/L1_BLOCK_SIZE
+    /* Map the rest (ADDR to 4GB) as device */
+    /* Total 4096 blocks. Used: MEM_BLK_IDX + 1 */
+    .set COUNT, 4096 - (MEM_BLK_IDX + 1)
     .rept   COUNT
     .4byte (PTE_SUPERPAGE | PTE_DEV_FLAGS) + ADDR
     .set ADDR, ADDR + L1_BLOCK_SIZE
